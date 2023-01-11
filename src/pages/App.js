@@ -12,29 +12,26 @@ function App() {
   let [repos, setRepos] = useState([]);
 
   const handleSearchRepo = async () => {
-    if (currentRepo === "") {
-      return alert('Adicione o link do repositório');
-    }
-    const { data } = await api.get(`repos/${currentRepo}`);
+    try {
+      if (currentRepo === "") {
+        return alert("Adicione o link do repositório");
+      }
+      const { data } = await api.get(`repos/${currentRepo}`);
 
-    if (!data.id) {
-      return alert("Repositório não encontrado");
+      const isExist = !!repos.find((repo) => repo.id === data.id);
+      if (isExist) {
+        return alert("Repositorio já incluso");
+      }
+      setRepos((prev) => [...prev, data]);
+      setCurrentRepo("");
+    } catch (e) {
+      alert("Repositório não encontrado");
     }
-
-    const isExist = !!repos.find(repo => repo.id === data.id);
-    console.log(isExist);
-    if (isExist) {
-      return alert("Repositorio já incluso");
-    }
-    setRepos((prev) => [...prev, data]);
-    setCurrentRepo("");
   };
 
   const handleRemoveRepo = (id) => {
     const itemRemoved = repos.filter((item) => item.id !== id);
     setRepos(itemRemoved);
-    console.log("Removendo registro", id, repos);
-
   };
 
   return (
